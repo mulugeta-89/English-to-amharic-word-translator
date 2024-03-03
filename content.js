@@ -2,7 +2,7 @@
 const tooltip = document.createElement('div');
 tooltip.style.position = 'absolute';
 tooltip.style.padding = '5px';
-tooltip.style.fontSize = "15px"
+tooltip.style.fontSize = "20px"
 tooltip.style.background = 'white';
 tooltip.style.color = "black"
 tooltip.style.border = '1px solid black';
@@ -20,7 +20,7 @@ async function load_dictionary() {
         
       } catch (error) {
         console.error('Error loading dictionary:', error);
-        throw error; // Re-throw the error to propagate it to the next handler
+        throw error; 
       }
 }
 //replacing  the translated div with a new translation
@@ -29,7 +29,6 @@ function translatedToDiv(translations) {
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  console.log(request)
   if (request.message === "clicked_browser_action") {
     if (window.translated) {
       alert("Translation already added to this page")
@@ -52,17 +51,47 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
           });
         }
       }
+      function sendingToTooltip(event, translatedWord) {
+        tooltip.innerHTML = translatedToDiv(translatedWord)
+          tooltip.style.display = "block"
+          tooltip.style.left = `${event.pageX + 3}px`
+          tooltip.style.top = `${event.pageY + 5}px`
+      }
       // this function handles the mouse over event on the words
       function handleMouseover(event) {
         if (event.target.classList.contains("hover-word")) {
           const word = event.target.textContent.trim()
-
-          const translatedWord = translatingDict[word] || translatingDict[word.toLowerCase()]
+          let endWord = ""
+          let translatedWord = translatingDict[word] || translatingDict[word.toLowerCase()]
           if (translatedWord) {
-            tooltip.innerHTML = translatedToDiv(translatedWord)
-            tooltip.style.display = "block"
-            tooltip.style.left = `${event.pageX + 3}px`
-            tooltip.style.top = `${event.pageY + 5}px`
+            sendingToTooltip(event, translatedWord)
+            
+          } else if (word.includes("ing")) {
+            let prefix = ["g","n", "i"]
+            let flag = true
+            let splittedWord = word.split("")
+            splittedWord.reverse()
+            for (let i = 0; i <= 2; i++){
+                if (splittedWord[i] != prefix[i]) {
+                  flag = false
+                }
+            }
+            if (flag) {
+              for (let i = splittedWord.length-1; i >2; i--){
+                endWord += splittedWord[i]
+              }
+            }
+            translatedWord = translatingDict[endWord] || translatingDict[endWord.toLowerCase()]
+            if (translatedWord) {
+              sendingToTooltip(event, translatedWord)
+            } else {
+              endWord += "e"
+              let temp = translatingDict[endWord] || translatingDict[endWord.toLowerCase()]
+              if (temp) {
+                sendingToTooltip(event, temp)
+              }
+            }
+
           }
         }
       }
