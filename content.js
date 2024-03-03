@@ -61,11 +61,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
           if (translatedWord) {
             tooltip.innerHTML = translatedToDiv(translatedWord)
             tooltip.style.display = "block"
-            tooltip.style.left = `${event.pageX + 15}px`
-            tooltip.style.top = `${event.pageY + 15}px`
+            tooltip.style.left = `${event.pageX + 3}px`
+            tooltip.style.top = `${event.pageY + 5}px`
           }
-          // console.log(typeof word)
-          // console.log(translatingDict[word])
         }
       }
       // this function handles the mouse out event
@@ -85,8 +83,3 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   }
 })
 
-// async function priting_dictionary() {
-//     const dictionary = await load_dictionary()
-//     console.log(dictionary)
-// }
-// priting_dictionary()
