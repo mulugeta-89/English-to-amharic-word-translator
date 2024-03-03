@@ -31,4 +31,4 @@ Feel free to contribute to the development of the Amharic Translator Chrome Exte
 
 ## Share Your Experience
 
-We appreciate your feedback! Share your thoughts, experiences, or interesting translations on our [GitHub repository](#repository-link).
+I appreciate your feedback! Share your thoughts, experiences, or interesting translations on my [GitHub repository](#repository-link).
