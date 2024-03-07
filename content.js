@@ -17,12 +17,14 @@ async function load_dictionary() {
         const response = await fetch(chrome.runtime.getURL("data/translations.json"));
         const text = await response.json();
         return text;
+      
         
       } catch (error) {
         console.error('Error loading dictionary:', error);
         throw error; 
       }
 }
+
 //replacing  the translated div with a new translation
 function translatedToDiv(translations) {
   return ('<div>' + translations.replaceAll("\n", '</div><div style="margin: 20px">') + '</div>')
@@ -33,7 +35,15 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (window.translated) {
       alert("Translation already added to this page")
     }
-    alert("Translation is starting!")
+    // alert("hello")
+    alert("Translation is starting!") 
+    // const selectedText = request.selected;
+    // console.log(selectedText)
+    // if (request.action === "translate") {
+    //     // const selectedText = request.selectedText;
+    //     // console.log("Selected text:", selectedText);
+    //     alert("hello")
+    // }
     load_dictionary().then(translatingDict => {
       // this function used to get words from the web page
       function wrapWords(element) {
@@ -51,6 +61,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
           });
         }
       }
+
+      // below function allows for sending the translated word to the tooltip
       function sendingToTooltip(event, translatedWord) {
         tooltip.innerHTML = translatedToDiv(translatedWord)
           tooltip.style.display = "block"
@@ -109,6 +121,16 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       alert("translation ready");
       window.translated = true
     });
+  } else if (request.message === "translate_action") {
+    var translatedWord = "else"
+    load_dictionary().then(translatingDict => {
+      // console.log(translatingDict)
+      const selectedWord = request.selected.trim();
+      translatedWord = translatingDict[selectedWord] || translatingDict[selectedWord.toLowerCase()]
+      alert(translatedWord)
+    })
+
   }
+    
 })
 
