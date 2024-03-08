@@ -23,7 +23,16 @@ Welcome to the Amharic Translator Chrome Extension! This tool seamlessly transla
 
 ### 4. Start Translating
 
-- Explore any webpage with English text, and the extension will translate words into Amharic.
+- Click on the extension icon.
+- In the extension popup, click the button labeled "መተርጎም ጀምር."
+- An alert will notify you that the translation is starting.
+- If the button doesn't work initially, try reloading the page and click the button again.
+### Translating PDF files
+
+- For PDF files, select the text you want to translate.
+- Right-click on the selected text.
+- Choose the option "Translate to Amharic."
+- An alert will display the translation.
 
 ## Contribution Guidelines
 
