@@ -27,7 +27,6 @@ async function load_dictionary() {
 }
 // funciton for handling suffix
 function handleSuffix(word, suffix) {
-  // let prefix = ["g","n", "i"]
   let endWord = ""
   let flag = true
   let splittedWord = word.split("")
@@ -83,32 +82,19 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       function handleMouseover(event) {
         if (event.target.classList.contains("hover-word")) {
           const word = event.target.textContent.trim()
-          let endWord = ""
+          
           let translatedWord = translatingDict[word] || translatingDict[word.toLowerCase()]
           if (translatedWord) {
             sendingToTooltip(event, translatedWord)
             
           } else if (word.includes("ing")) {
-            let prefix = ["g","n", "i"]
-            let flag = true
-            let splittedWord = word.split("")
-            splittedWord.reverse()
-            for (let i = 0; i <= 2; i++){
-                if (splittedWord[i] != prefix[i]) {
-                  flag = false
-                }
-            }
-            if (flag) {
-              for (let i = splittedWord.length-1; i >2; i--){
-                endWord += splittedWord[i]
-              }
-            }
-            translatedWord = translatingDict[endWord] || translatingDict[endWord.toLowerCase()]
+            let tempWord = handleSuffix(word, ["g","n","i"])
+            translatedWord = translatingDict[tempWord] || translatingDict[tempWord.toLowerCase()]
             if (translatedWord) {
               sendingToTooltip(event, translatedWord)
             } else {
-              endWord += "e"
-              let temp = translatingDict[endWord] || translatingDict[endWord.toLowerCase()]
+              tempWord += "e"
+              let temp = translatingDict[tempWord] || translatingDict[tempWord.toLowerCase()]
               if (temp) {
                 sendingToTooltip(event, temp)
               }
@@ -131,13 +117,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             if (translatedWord) {
               sendingToTooltip(event, translatedWord)
             }
-            // } else {
-            //   tempWord += "e"
-            //   let temp = translatingDict[tempWord] || translatingDict[tempWord.toLowerCase()]
-            //   if (temp) {
-            //     sendingToTooltip(event, temp)
-            //   }
-            // }
           }
         }
       }
