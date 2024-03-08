@@ -23,12 +23,6 @@
       "data/translations.json",
       "data/Getpid.pdf"
     ],
-    "permissions": ["activeTab", "file://*/*", "contextMenus", "storage", "notifications"],
-    "commands": {
-      "inject-script": {
-        "suggested_key": "Ctrl+Shift+0",
-        "description": "Translate selected text"
-      }
-    }
+    "permissions": ["activeTab", "file://*/*", "contextMenus", "storage", "notifications"]
   }
   

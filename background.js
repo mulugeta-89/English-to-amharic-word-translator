@@ -26,12 +26,3 @@ chrome.contextMenus.onClicked.addListener(function (info, tab) {
         });
     }
 });
-  
-chrome.contextMenus.onClicked.addListener(function (command) {
-    if (command === "translateShortcut") {
-        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            var activeTab = tabs[0];
-            chrome.tabs.sendMessage(activeTab.id, { "message": "translate_action","selected": info.selectionText });
-        });
-    }
-  });
