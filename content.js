@@ -12,6 +12,7 @@ tooltip.style.zIndex = '1000';
 document.body.appendChild(tooltip);
 
 window.translated = false
+// a function to the translation.json file
 async function load_dictionary() {
     try {
         const response = await fetch(chrome.runtime.getURL("data/translations.json"));
@@ -24,26 +25,35 @@ async function load_dictionary() {
         throw error; 
       }
 }
-
+// funciton for handling suffix
+function handleSuffix(word, suffix) {
+  // let prefix = ["g","n", "i"]
+  let endWord = ""
+  let flag = true
+  let splittedWord = word.split("")
+  splittedWord.reverse()
+  for (let i = 0; i <= suffix.length-1; i++){
+      if (splittedWord[i] != suffix[i]) {
+        flag = false
+      }
+  }
+  if (flag) {
+    for (let i = splittedWord.length-1; i > suffix.length-1; i--){
+      endWord += splittedWord[i]
+    }
+  }
+  return endWord
+}
 //replacing  the translated div with a new translation
 function translatedToDiv(translations) {
   return ('<div>' + translations.replaceAll("\n", '</div><div style="margin: 20px">') + '</div>')
 }
-
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.message === "clicked_browser_action") {
     if (window.translated) {
       alert("Translation already added to this page")
     }
-    // alert("hello")
     alert("Translation is starting!") 
-    // const selectedText = request.selected;
-    // console.log(selectedText)
-    // if (request.action === "translate") {
-    //     // const selectedText = request.selectedText;
-    //     // console.log("Selected text:", selectedText);
-    //     alert("hello")
-    // }
     load_dictionary().then(translatingDict => {
       // this function used to get words from the web page
       function wrapWords(element) {
@@ -102,8 +112,32 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
               if (temp) {
                 sendingToTooltip(event, temp)
               }
+            } 
+          } else if (word.includes("ed")) {
+            let tempWord = handleSuffix(word, ["d", "e"])
+            translatedWord = translatingDict[tempWord] || translatingDict[tempWord.toLowerCase()]
+            if (translatedWord) {
+              sendingToTooltip(event, translatedWord)
+            } else {
+              tempWord += "e"
+              let temp = translatingDict[tempWord] || translatingDict[tempWord.toLowerCase()]
+              if (temp) {
+                sendingToTooltip(event, temp)
+              }
+            } 
+          } else if (word.includes("s")) {
+            let tempWord = handleSuffix(word, ["s"])
+            translatedWord = translatingDict[tempWord] || translatingDict[tempWord.toLowerCase()]
+            if (translatedWord) {
+              sendingToTooltip(event, translatedWord)
             }
-
+            // } else {
+            //   tempWord += "e"
+            //   let temp = translatingDict[tempWord] || translatingDict[tempWord.toLowerCase()]
+            //   if (temp) {
+            //     sendingToTooltip(event, temp)
+            //   }
+            // }
           }
         }
       }
@@ -121,16 +155,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       alert("translation ready");
       window.translated = true
     });
+    //below is for handling the context menu sent message
   } else if (request.message === "translate_action") {
-    var translatedWord = "else"
+    var translatedWord = ""
     load_dictionary().then(translatingDict => {
-      // console.log(translatingDict)
       const selectedWord = request.selected.trim();
       translatedWord = translatingDict[selectedWord] || translatingDict[selectedWord.toLowerCase()]
       alert(translatedWord)
     })
-
   }
-    
 })
 
